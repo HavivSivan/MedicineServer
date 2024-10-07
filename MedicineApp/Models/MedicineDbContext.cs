@@ -33,7 +33,7 @@ public partial class MedicineDbContext : DbContext
     {
         modelBuilder.Entity<Medicine>(entity =>
         {
-            entity.HasKey(e => e.MedicineId).HasName("PK__Medicine__4F21289006E63173");
+            entity.HasKey(e => e.MedicineId).HasName("PK__Medicine__4F212890361759A4");
 
             entity.HasOne(d => d.Pharmacy).WithMany(p => p.Medicines).HasConstraintName("FK__Medicines__Pharm__2C3393D0");
 
@@ -44,12 +44,12 @@ public partial class MedicineDbContext : DbContext
 
         modelBuilder.Entity<MedicineStatus>(entity =>
         {
-            entity.HasKey(e => e.StatusId).HasName("PK__Medicine__C8EE20630447361E");
+            entity.HasKey(e => e.StatusId).HasName("PK__Medicine__C8EE20639F1469E1");
         });
 
         modelBuilder.Entity<Order>(entity =>
         {
-            entity.HasKey(e => e.OrderId).HasName("PK__Orders__C3905BCF17BE1F54");
+            entity.HasKey(e => e.OrderId).HasName("PK__Orders__C3905BCF9711B8C0");
 
             entity.HasOne(d => d.Medicine).WithMany(p => p.Orders).HasConstraintName("FK__Orders__Medicine__30F848ED");
 
@@ -58,12 +58,12 @@ public partial class MedicineDbContext : DbContext
 
         modelBuilder.Entity<Pharmacy>(entity =>
         {
-            entity.HasKey(e => e.PharmacyId).HasName("PK__Pharmaci__BD9D2AAE2D8B1D7A");
+            entity.HasKey(e => e.PharmacyId).HasName("PK__Pharmaci__BD9D2AAED96CE09A");
         });
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.UserId).HasName("PK__Users__1788CC4C5E286BD6");
+            entity.HasKey(e => e.UserId).HasName("PK__Users__1788CC4CD1F9A2C6");
         });
 
         OnModelCreatingPartial(modelBuilder);

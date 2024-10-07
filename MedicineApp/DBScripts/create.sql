@@ -20,7 +20,7 @@ USE MedicineDB
  CREATE TABLE Pharmacies (
  PharmacyId int NOT NULL IDENTITY(1,1) PRIMARY KEY,
  PharmacyName NVarchar(255),
- Adress Geography,
+ Adress Nvarchar,
  Phone int
  )
  CREATE TABLE MedicineStatuses(
@@ -45,8 +45,8 @@ USE MedicineDB
  FOREIGN KEY (MedicineId) REFERENCES Medicines(MedicineId),
  UserId int
  FOREIGN KEY (UserId) REFERENCES Users(UserId),
- Receiver Geography,
- Sender Geography
+ Receiver Nvarchar,
+ Sender Nvarchar
  )
 
 CREATE LOGIN [MedicineAdminLogin] WITH PASSWORD = 'qwerty';

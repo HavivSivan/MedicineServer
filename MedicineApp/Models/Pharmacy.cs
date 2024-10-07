@@ -14,6 +14,9 @@ public partial class Pharmacy
     [StringLength(255)]
     public string? PharmacyName { get; set; }
 
+    [StringLength(1)]
+    public string? Adress { get; set; }
+
     public int? Phone { get; set; }
 
     [InverseProperty("Pharmacy")]

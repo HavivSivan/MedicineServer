@@ -15,6 +15,12 @@ public partial class Order
 
     public int? UserId { get; set; }
 
+    [StringLength(1)]
+    public string? Receiver { get; set; }
+
+    [StringLength(1)]
+    public string? Sender { get; set; }
+
     [ForeignKey("MedicineId")]
     [InverseProperty("Orders")]
     public virtual Medicine? Medicine { get; set; }

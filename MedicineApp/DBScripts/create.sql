@@ -1,4 +1,6 @@
-﻿IF EXISTS (SELECT * FROM sys.databases WHERE name = N'MedicineDB')
+﻿use master
+go
+IF EXISTS (SELECT * FROM sys.databases WHERE name = N'MedicineDB')
 BEGIN
     DROP DATABASE MedicineDB;
 END
@@ -46,14 +48,14 @@ USE MedicineDB
  Receiver Geography,
  Sender Geography
  )
- USE MedicineDB 
- CREATE LOGIN [MedicineAdminLogin] WITH PASSWORD = 'qwerty'
+
+CREATE LOGIN [MedicineAdminLogin] WITH PASSWORD = 'qwerty';
 Go
-CREATE USER [MedicineAdminUser] FOR LOGIN [MedicineAdminLogin]
+CREATE USER [MedicineAdminUser] FOR LOGIN [MedicineAdminLogin];
 Go
- ALTER ROLE db_owner ADD MEMBER [MedicineAdminUser]
+ALTER ROLE db_owner ADD MEMBER [MedicineAdminUser];
 Go
  
 
---scaffold-DbContext "Server = (localdb)\MSSQLLocalDB;Initial Catalog=medicineDB;User ID=MedicineAdminUser;Password=qwerty;" Microsoft.EntityFrameworkCore.SqlServer -OutPutDir Models -Context MedicineDbContext -DataAnnotations -force
+--scaffold-DbContext "Server = (localdb)\MSSQLLocalDB;Initial Catalog=medicineDB;User ID=MedicineAdminLogin;Password=qwerty;" Microsoft.EntityFrameworkCore.SqlServer -OutPutDir Models -Context MedicineDbContext -DataAnnotations -force
 

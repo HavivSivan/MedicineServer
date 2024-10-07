@@ -1,4 +1,6 @@
+
 CREATE DATABASE MedicineDB
+Use MedicineDB
  CREATE TABLE Users (
  UserId int NOT NULL IDENTITY(2,1) PRIMARY KEY,
  FirstName NVarchar (255),

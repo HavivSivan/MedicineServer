@@ -46,13 +46,14 @@ USE MedicineDB
  Receiver Geography,
  Sender Geography
  )
+ USE MedicineDB 
+ CREATE LOGIN [MedicineAdminLogin] WITH PASSWORD = 'qwerty'
+Go
+CREATE USER [MedicineAdminUser] FOR LOGIN [MedicineAdminLogin]
+Go
+ ALTER ROLE db_owner ADD MEMBER [MedicineAdminUser]
+Go
  
- 
- CREATE LOGIN [MedicineAdminLogin] WITH PASSWORD = 'qwerty';
-Go
-CREATE USER [MedicineAdminUser] FOR LOGIN [MedicineAdminLogin];
-Go
- ALTER ROLE db_owner ADD MEMBER [MedicineAdminUser];
-Go
---scaffold-DbContext "Server = (localdb)\MSSQLLocalDB;Initial Catalog=MedicineDB;User ID=MedicineAdminUser;Password=qwerty;" Microsoft.EntityFrameworkCore.SqlServer -OutPutDir Models -Context MedicineDbContext -DataAnnotations -force
+
+--scaffold-DbContext "Server = (localdb)\MSSQLLocalDB;Initial Catalog=medicineDB;User ID=MedicineAdminUser;Password=qwerty;" Microsoft.EntityFrameworkCore.SqlServer -OutPutDir Models -Context MedicineDbContext -DataAnnotations -force
 

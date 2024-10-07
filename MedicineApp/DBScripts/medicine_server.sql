@@ -1,11 +1,12 @@
-CREATE DATABASE medicine_server
+CREATE DATABASE MedicineDB
  CREATE TABLE Users (
  UserId int NOT NULL IDENTITY(2,1) PRIMARY KEY,
  FirstName NVarchar (255),
  LastName NVarchar (255),
  UserName Varchar(30),
  UserPass Varchar (255),
- UserRank int CHECK(UserRank=1 OR UserRank = 2)
+ UserRank int, 
+ CHECK (UserRank=1 OR UserRank = 2)
  );
  CREATE TABLE Pharmacies (
  PharmacyId int NOT NULL IDENTITY(1,1) PRIMARY KEY,
@@ -21,6 +22,8 @@ CREATE DATABASE medicine_server
   BrandName Nvarchar,
   StatusId int
   FOREIGN KEY (StatusId) REFERENCES MedicineStatuses(StatusId),
+  UserId int
+  FOREIGN KEY (UserId) REFERENCES Users(UserId)
  );
  CREATE TABLE Orders(
  OrderId int NOT NULL IDENTITY(1,1) PRIMARY KEY,
@@ -37,4 +40,10 @@ CREATE DATABASE medicine_server
  Notes NVarchar,
  );
  
- 
+ CREATE LOGIN [MedicineAdminLogin] WITH PASSWORD = 'qwerty';
+Go
+CREATE USER [MedicineAdminUser] FOR LOGIN [MedicineAdminLogin];
+Go
+ ALTER ROLE db_owner ADD MEMBER [MedicineAdminUser];
+Go
+--scaffold-DbContext "Server = (localdb)\MSSQLLocalDB;Initial Catalog=MedicineDB;User ID=MedicineAdminUser;Password=qwerty;" Microsoft.EntityFrameworkCore.SqlServer -OutPutDir Models -Context MedicineDbContext -DataAnnotations -force

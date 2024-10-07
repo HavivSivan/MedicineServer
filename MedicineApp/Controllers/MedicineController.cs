@@ -7,5 +7,15 @@ namespace MedicineApp.Controllers
     [ApiController]
     public class MedicineController : ControllerBase
     {
+      
+        //private TasksManagementDbContext context;
+        
+        //private IWebHostEnvironment webHostEnvironment;
+       
+        //public TasksManagementAPIController(TasksManagementDbContext context, IWebHostEnvironment env)
+        //{
+        //    this.context = context;
+        //    this.webHostEnvironment = env;
+        //}
     }
 }

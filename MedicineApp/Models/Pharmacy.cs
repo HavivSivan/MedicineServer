@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-namespace MedicineApp.Models;
+namespace MedicineServer.Models;
 
 public partial class Pharmacy
 {
@@ -17,7 +17,7 @@ public partial class Pharmacy
     [StringLength(1)]
     public string? Adress { get; set; }
 
-    public int? Phone { get; set; }
+    public int Phone { get; set; }
 
     [InverseProperty("Pharmacy")]
     public virtual ICollection<Medicine> Medicines { get; set; } = new List<Medicine>();

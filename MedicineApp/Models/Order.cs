@@ -4,16 +4,16 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-namespace MedicineApp.Models;
+namespace MedicineServer.Models;
 
 public partial class Order
 {
     [Key]
     public int OrderId { get; set; }
 
-    public int? MedicineId { get; set; }
+    public int MedicineId { get; set; }
 
-    public int? UserId { get; set; }
+    public int UserId { get; set; }
 
     [StringLength(1)]
     public string? Receiver { get; set; }

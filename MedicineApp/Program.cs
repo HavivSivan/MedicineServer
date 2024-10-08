@@ -1,5 +1,6 @@
 
-namespace MedicineApp
+namespace MedicineServer
+
 {
     public class Program
     {

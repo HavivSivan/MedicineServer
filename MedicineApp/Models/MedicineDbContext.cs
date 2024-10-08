@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
-namespace MedicineApp.Models;
+namespace MedicineServer.Models;
 
 public partial class MedicineDbContext : DbContext
 {

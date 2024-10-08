@@ -1,4 +1,4 @@
-namespace MedicineApp
+namespace MedicineServer
 {
     public class WeatherForecast
     {

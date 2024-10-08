@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-namespace MedicineApp.Models;
+namespace MedicineServer.Models;
 
 public partial class User
 {
@@ -25,7 +25,8 @@ public partial class User
     [Unicode(false)]
     public string? UserPass { get; set; }
 
-    public int? UserRank { get; set; }
+    public string? Email { get; set; }
+    public int UserRank { get; set; }
 
     [InverseProperty("User")]
     public virtual ICollection<Medicine> Medicines { get; set; } = new List<Medicine>();

@@ -10,12 +10,13 @@ Go
 USE MedicineDB
  CREATE TABLE Users (
  UserId int NOT NULL IDENTITY(2,1) PRIMARY KEY,
+ Email Nvarchar NOT NULL,
  FirstName NVarchar (255),
  LastName NVarchar (255),
  UserName Varchar(30),
  UserPass Varchar (255),
  UserRank int, 
- CHECK (UserRank=1 OR UserRank = 2)
+ CHECK (UserRank=1 OR UserRank = 2 OR UserRank=3)
  )
  CREATE TABLE Pharmacies (
  PharmacyId int NOT NULL IDENTITY(1,1) PRIMARY KEY,

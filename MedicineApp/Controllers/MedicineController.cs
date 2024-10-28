@@ -1,6 +1,7 @@
 ﻿using MedicineServer.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace MedicineServer.Controllers
 {
@@ -13,32 +14,32 @@ namespace MedicineServer.Controllers
 
         private IWebHostEnvironment webHostEnvironment;
 
-        public  MedicineAPIController(MedicineDbContext context, IWebHostEnvironment env)
+        public  MedicineController(MedicineDbContext context, IWebHostEnvironment env)
         {
             this.context = context;
             this.webHostEnvironment = env;
         }
         [HttpPost("login")]
-        public IActionResult Login([FromBody] DTO.LoginInfo loginDto)
+        public IActionResult Login([FromBody] DTO.AppUser loginDto)
         {
             try
             {
                 HttpContext.Session.Clear(); //Logout any previous login attempt
 
                 //Get model user class from DB with matching email. 
-                Models.AppUser? modelsUser = context.GetUser(loginDto.Email);
+                Models.User? modelsUser =  context.Users.ToListAsync().Where(x=>x.UserId==loginDto.Id);
 
                 //Check if user exist for this email and if password match, if not return Access Denied (Error 403) 
-                if (modelsUser == null || modelsUser.UserPassword != loginDto.Password)
+                if (modelsUser == null || modelsUser.UserPass != loginDto.UserPassword)
                 {
                     return Unauthorized();
                 }
 
                 //Login suceed! now mark login in session memory!
-                HttpContext.Session.SetString("loggedInUser", modelsUser.UserEmail);
+                HttpContext.Session.SetString("loggedInUser", modelsUser.UserId.ToString());
 
                 DTO.AppUser dtoUser = new DTO.AppUser(modelsUser);
-                dtoUser.ProfileImagePath = GetProfileImageVirtualPath(dtoUser.Id);
+               
                 return Ok(dtoUser);
             }
             catch (Exception ex)

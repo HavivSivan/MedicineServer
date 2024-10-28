@@ -13,7 +13,7 @@ namespace MedicineServer.Controllers
 
         private IWebHostEnvironment webHostEnvironment;
 
-        public MedicineAPIController(MedicineDbContext context, IWebHostEnvironment env)
+        public  MedicineAPIController(MedicineDbContext context, IWebHostEnvironment env)
         {
             this.context = context;
             this.webHostEnvironment = env;

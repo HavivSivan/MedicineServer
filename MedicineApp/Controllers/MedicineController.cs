@@ -27,7 +27,7 @@ namespace MedicineServer.Controllers
                 HttpContext.Session.Clear(); //Logout any previous login attempt
 
                 //Get model user class from DB with matching email. 
-                Models.User? modelsUser =  context.Users.ToListAsync().Where(x=>x.UserId==loginDto.Id);
+                Models.User? modelsUser =  context.Users.ToList().First(x=>x.UserId==loginDto.Id);
 
                 //Check if user exist for this email and if password match, if not return Access Denied (Error 403) 
                 if (modelsUser == null || modelsUser.UserPass != loginDto.UserPassword)
@@ -56,16 +56,18 @@ namespace MedicineServer.Controllers
                 HttpContext.Session.Clear(); //Logout any previous login attempt
 
                 //Get model user class from DB with matching email. 
-                Models.AppUser modelsUser = new AppUser()
+                Models.User modelsUser = new User()
                 {
                     UserName = userDto.UserName,
-                    UserLastName = userDto.UserLastName,
-                    UserEmail = userDto.UserEmail,
-                    UserPassword = userDto.UserPassword,
-                    IsManager = userDto.IsManager
+                    FirstName = userDto.FirstName,
+                    LastName = userDto.LastName,
+                    Email = userDto.UserEmail,
+                    UserPass = userDto.UserPassword,
+                    UserRank = userDto.Rank,
+                    UserId=userDto.Id
                 };
 
-                context.AppUsers.Add(modelsUser);
+                context.Users.Add(modelsUser);
                 context.SaveChanges();
 
                 //User was added!

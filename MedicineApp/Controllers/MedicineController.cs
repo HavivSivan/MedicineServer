@@ -1,4 +1,5 @@
-﻿using MedicineServer.Models;
+﻿
+using MedicineServer.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -20,17 +21,17 @@ namespace MedicineServer.Controllers
             this.webHostEnvironment = env;
         }
         [HttpPost("login")]
-        public IActionResult Login([FromBody] DTO.AppUser loginDto)
+        public IActionResult Login([FromBody] DTO.LoginInfo loginDto)
         {
             try
             {
                 HttpContext.Session.Clear(); //Logout any previous login attempt
 
                 //Get model user class from DB with matching email. 
-                Models.User? modelsUser =  context.Users.ToList().First(x=>x.UserId==loginDto.Id);
+                Models.User? modelsUser =  context.Users.ToList().First(x=>x.UserName==loginDto.username);
 
                 //Check if user exist for this email and if password match, if not return Access Denied (Error 403) 
-                if (modelsUser == null || modelsUser.UserPass != loginDto.UserPassword)
+                if (modelsUser == null || modelsUser.UserPass != loginDto.password)
                 {
                     return Unauthorized();
                 }

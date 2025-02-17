@@ -40,7 +40,7 @@ namespace MedicineServer.Controllers
                 return BadRequest(new { message = "Admins cannot be deleted." });
             }
             user.Active = false;
-            context.Users.FirstOrDefault(u=>u.UserId == id) = user;
+            context.Users.FirstOrDefault(u => u.UserId == id) = user;
             await context.SaveChangesAsync();
 
             return Ok(new { message = "User deleted successfully." });

@@ -16,6 +16,7 @@ namespace MedicineServer.DTO
         public int Rank { get; set; }
 
         public int Id { get; set; }
+        public bool Active { get; set; }
 
         public AppUser() { }
         public AppUser(Models.User modelUser)
@@ -29,6 +30,7 @@ namespace MedicineServer.DTO
                 this.Email = modelUser.Email;
                 this.UserPassword = modelUser.UserPass;
                 this.Rank = modelUser.UserRank;
+                this.Active = true;
             }
         }
     }

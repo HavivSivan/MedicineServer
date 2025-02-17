@@ -33,7 +33,7 @@ public partial class MedicineDbContext : DbContext
     {
         modelBuilder.Entity<Medicine>(entity =>
         {
-            entity.HasKey(e => e.MedicineId).HasName("PK__Medicine__4F21289014701CC4");
+            entity.HasKey(e => e.MedicineId).HasName("PK__Medicine__4F21289064940FB9");
 
             entity.HasOne(d => d.Pharmacy).WithMany(p => p.Medicines)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -50,12 +50,12 @@ public partial class MedicineDbContext : DbContext
 
         modelBuilder.Entity<MedicineStatus>(entity =>
         {
-            entity.HasKey(e => e.StatusId).HasName("PK__Medicine__C8EE2063C10C2C2C");
+            entity.HasKey(e => e.StatusId).HasName("PK__Medicine__C8EE20638431E0BD");
         });
 
         modelBuilder.Entity<Order>(entity =>
         {
-            entity.HasKey(e => e.OrderId).HasName("PK__Orders__C3905BCF6C6A0871");
+            entity.HasKey(e => e.OrderId).HasName("PK__Orders__C3905BCF2340D910");
 
             entity.HasOne(d => d.Medicine).WithMany(p => p.Orders)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -68,7 +68,7 @@ public partial class MedicineDbContext : DbContext
 
         modelBuilder.Entity<Pharmacy>(entity =>
         {
-            entity.HasKey(e => e.PharmacyId).HasName("PK__Pharmaci__BD9D2AAEECD76D27");
+            entity.HasKey(e => e.PharmacyId).HasName("PK__Pharmaci__BD9D2AAE9429D4CB");
 
             entity.HasOne(d => d.User).WithMany(p => p.Pharmacies)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -77,7 +77,7 @@ public partial class MedicineDbContext : DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.UserId).HasName("PK__Users__1788CC4C6F208C3F");
+            entity.HasKey(e => e.UserId).HasName("PK__Users__1788CC4CE125A466");
         });
 
         OnModelCreatingPartial(modelBuilder);

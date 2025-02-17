@@ -28,7 +28,9 @@ public partial class User
     [Unicode(false)]
     public string UserPass { get; set; } = null!;
 
-    public int UserRank { get; set; }
+    public int? UserRank { get; set; }
+
+    public bool Active { get; set; }
 
     [InverseProperty("User")]
     public virtual ICollection<Medicine> Medicines { get; set; } = new List<Medicine>();

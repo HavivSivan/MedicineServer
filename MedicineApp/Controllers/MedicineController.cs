@@ -24,7 +24,7 @@ namespace MedicineServer.Controllers
             this.context = context;
             this.webHostEnvironment = env;
         }
-        [HttpDelete("{id}")]
+        [HttpPost("deleteuser")]
         public async Task<IActionResult> DeleteUser(int id)
         {
             
@@ -39,8 +39,8 @@ namespace MedicineServer.Controllers
             {
                 return BadRequest(new { message = "Admins cannot be deleted." });
             }
-
-            context.Users.Remove(user);
+            user.Active = false;
+            context.Users.FirstOrDefault(u=>u.UserId == id) = user;
             await context.SaveChangesAsync();
 
             return Ok(new { message = "User deleted successfully." });

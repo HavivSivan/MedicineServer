@@ -17,7 +17,8 @@ CREATE TABLE Users (
     LastName NVARCHAR(255) NOT NULL,
     UserName VARCHAR(30) NOT NULL,
     UserPass VARCHAR(255) NOT NULL,
-    UserRank INT CHECK (UserRank IN (1, 2, 3))
+    UserRank INT CHECK (UserRank IN (1, 2, 3)),
+    Active BIT NOT NULL
 );
 
 CREATE TABLE Pharmacies (
@@ -73,8 +74,8 @@ GO
 ALTER ROLE db_owner ADD MEMBER [MedicineAdminUser];
 GO
 
-INSERT INTO Users (Email, FirstName, LastName, UserName, UserPass, UserRank)
-VALUES ('Admin@admin.com', 'Admin', 'Admin', 'Admin', 'qwerty', 1);
+INSERT INTO Users (Email, FirstName, LastName, UserName, UserPass, UserRank, Active)
+VALUES ('Admin@admin.com', 'Admin', 'Admin', 'Admin', 'qwerty', 1, 1);
 INSERT INTO Pharmacies (PharmacyName, Adress, Phone, UserId)
 VALUES 
 ('Good Health Pharmacy', '123 Main St, City', '1234567890', 2);

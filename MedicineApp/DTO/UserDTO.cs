@@ -20,13 +20,16 @@ namespace MedicineServer.DTO
         public AppUser() { }
         public AppUser(Models.User modelUser)
         {
-            this.Id = modelUser.UserId;
-            this.UserName = modelUser.UserName;
-            this.LastName = modelUser.LastName;
-            this.FirstName = modelUser.FirstName;
-            this.Email = modelUser.Email;
-            this.UserPassword = modelUser.UserPass;
-            this.Rank = modelUser.UserRank;
+            if (modelUser!=null)
+            {
+                this.Id = modelUser.UserId;
+                this.UserName = modelUser.UserName;
+                this.LastName = modelUser.LastName;
+                this.FirstName = modelUser.FirstName;
+                this.Email = modelUser.Email;
+                this.UserPassword = modelUser.UserPass;
+                this.Rank = modelUser.UserRank;
+            }
         }
     }
 }

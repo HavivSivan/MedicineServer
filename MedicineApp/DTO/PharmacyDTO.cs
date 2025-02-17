@@ -16,12 +16,15 @@ namespace MedicineServer.DTO
         public PharmacyDTO() { }
         public PharmacyDTO(Pharmacy modelPharma)
         {
-            this.Id = modelPharma.PharmacyId;
-            this.Name = modelPharma.PharmacyName;
-            this.Address = modelPharma.Adress;
-            this.Phone=modelPharma.Phone;
-            AppUser user = new AppUser(modelPharma.User);
-            this.User=user;
+            if (modelPharma!=null)
+            {
+                this.Id = modelPharma.PharmacyId;
+                this.Name = modelPharma.PharmacyName;
+                this.Address = modelPharma.Adress;
+                this.Phone=modelPharma.Phone;
+                AppUser user = new AppUser(modelPharma.User);
+                this.User=user;
+            }
         }
     }
 }

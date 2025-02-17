@@ -114,6 +114,29 @@ namespace MedicineServer.Controllers
                 return StatusCode(500, new { Message = "An error occurred while retrieving Users.", Error = ex.Message });
             }
         }
+        [HttpGet("getmedicinesbypharma")]
+        public IActionResult GetMedicinesByPharmacy([FromQuery] int PharmacyId)
+        {
+            try
+            {
+                List<Models.Medicine> Tlist = context.Medicines.Where(x=>x.PharmacyId==PharmacyId).ToList<Models.Medicine>();
+                if (Tlist == null)
+                {
+                    return NotFound(new { Message = "You have no medicines." });
+                }
+                List<MedicineDTO> list = new List<MedicineDTO>();
+                foreach(Models.Medicine x in Tlist)
+                {
+                    MedicineDTO temp = new MedicineDTO(x);
+                    list.Add(temp);
+                }
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "An error occurred while retrieving the medicines.", Error = ex.Message });
+            }
+        }
         [HttpGet("getmedicines")]
         public IActionResult GetMedicines()
         {

@@ -3,6 +3,10 @@ using MedicineServer.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Data.Entity;
+using System.Linq;
+using MedicineServer.DTO;
+using Microsoft.IdentityModel.Tokens;
 
 namespace MedicineServer.Controllers
 {
@@ -20,26 +24,63 @@ namespace MedicineServer.Controllers
             this.context = context;
             this.webHostEnvironment = env;
         }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteUser(int id)
+        {
+            
+            var user = await context.Users.FindAsync(id);
+
+            if (user == null)
+            {
+                return NotFound(new { message = "User not found." });
+            }
+
+            if (user.UserRank == 1)
+            {
+                return BadRequest(new { message = "Admins cannot be deleted." });
+            }
+
+            context.Users.Remove(user);
+            await context.SaveChangesAsync();
+
+            return Ok(new { message = "User deleted successfully." });
+        }
+        [HttpGet("getuserbyusername")]
+        public IActionResult GetUserByUsername([FromQuery] string username)
+        {
+            try
+            {
+                var tempuser = context.Users.FirstOrDefault(u => u.UserName == username);
+                if (tempuser == null)
+                {
+                    return NotFound(new { Message = "User not found." });
+                }
+                AppUser user = new AppUser(tempuser);
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "An error occurred while retrieving the user.", Error = ex.Message });
+            }
+        }
+
         [HttpPost("login")]
         public IActionResult Login([FromBody] DTO.LoginInfo loginDto)
         {
             try
             {
-                HttpContext.Session.Clear(); //Logout any previous login attempt
+                HttpContext.Session.Clear(); 
 
-                //Get model user class from DB with matching email. 
+             
                 Models.User? modelsUser =  context.Users.ToList().First(x=>x.UserName==loginDto.username);
 
-                //Check if user exist for this email and if password match, if not return Access Denied (Error 403) 
+                
                 if (modelsUser == null || modelsUser.UserPass != loginDto.password)
                 {
                     return Unauthorized();
                 }
-
-                //Login suceed! now mark login in session memory!
                 HttpContext.Session.SetString("loggedInUser", modelsUser.UserId.ToString());
-
-                DTO.AppUser dtoUser = new DTO.AppUser(modelsUser);
+                AppUser dtoUser = new AppUser(modelsUser);
                
                 return Ok(dtoUser);
             }
@@ -49,38 +90,102 @@ namespace MedicineServer.Controllers
             }
 
         }
-        [HttpPost("register")]
-        public IActionResult Register([FromBody] DTO.AppUser userDto)
+        [HttpGet("getusers")]
+        public IActionResult GetUsers()
         {
             try
             {
-                HttpContext.Session.Clear(); //Logout any previous login attempt
+                List<User> list = new List<User>();
+                
+                foreach (var user in context.Users)
+                {
+                    AppUser temp = new AppUser(user);
+                    list.Add(user);
 
-                //Get model user class from DB with matching email. 
-                Models.User modelsUser = new User()
+                }
+                if (list.IsNullOrEmpty())
+                {
+                    return NotFound(new { Message = "No users exist." });
+                }
+                return Ok(list);
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500, new { Message = "An error occurred while retrieving Users.", Error = ex.Message });
+            }
+        }
+        [HttpGet("getmedicines")]
+        public IActionResult GetMedicines()
+        {
+            try
+            {
+                List<MedicineDTO> list = new List<MedicineDTO>();
+                foreach(var m in  context.Medicines)
+                {
+                    MedicineDTO temp = new MedicineDTO(m);
+                    list.Add(temp);
+                }
+                if (list.IsNullOrEmpty())
+                    return NotFound(new { Message = "No medicines exist." });
+                return Ok(list);
+            }
+            
+            catch(Exception ex)
+            { 
+                return StatusCode(500, new { Message = "An error occurred while retrieving medicines.", error = ex.Message }); 
+            }
+        }
+        [HttpPost("register")]
+        public IActionResult Register([FromBody] DTO.AppUser userDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            try
+            {
+                if (context.Users.Any(u => u.UserName == userDto.UserName || u.Email == userDto.Email))
+                {
+                    return BadRequest("User with the same username or email already exists.");
+                }
+
+                Models.User modelsUser = new User
                 {
                     UserName = userDto.UserName,
                     FirstName = userDto.FirstName,
                     LastName = userDto.LastName,
-                    Email = userDto.UserEmail,
+                    Email = userDto.Email,
                     UserPass = userDto.UserPassword,
                     UserRank = userDto.Rank,
-                    UserId=userDto.Id
+                    UserId = userDto.Id
                 };
 
                 context.Users.Add(modelsUser);
-                context.SaveChanges();
+                Console.WriteLine($"User Email: {userDto.Email}");
+                if (userDto.Email.Length > 255)
+                {
+                    throw new ArgumentException("Email exceeds the maximum allowed length of 255 characters.");
+                }
+                Console.WriteLine($"User Email: {userDto.Email} (Length: {userDto.Email.Length})");
+                try
+                {
 
-                //User was added!
-                DTO.AppUser dtoUser = new DTO.AppUser(modelsUser);
-                
-                return Ok(dtoUser);
+                    context.SaveChanges();
+                }
+                catch (DbUpdateException ex)
+                {
+                    Console.WriteLine($"Error: {ex.InnerException?.Message}");
+                    Console.WriteLine($"Error: {ex.ToString()}");
+                    throw; 
+                }
+
+                return Ok(new DTO.AppUser(modelsUser));
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                Console.WriteLine($"Error during registration: {ex.Message}");
+                return BadRequest($"Error during registration: {ex.Message}");
             }
-
         }
 
 

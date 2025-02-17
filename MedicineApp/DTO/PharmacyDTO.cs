@@ -9,17 +9,19 @@ namespace MedicineServer.DTO
         public int Id { get; set; } 
 
         public string Name { get; set; } = null!;
-        public string Adress { get; set; } = null!;
-
-        public int Phone { get; set; }
+        public string Address { get; set; } = null!;
+        public AppUser User { get; set; } 
+        public string Phone { get; set; }
 
         public PharmacyDTO() { }
-        public PharmacyDTO(Models.Pharmacy modelPharma)
+        public PharmacyDTO(Pharmacy modelPharma)
         {
             this.Id = modelPharma.PharmacyId;
             this.Name = modelPharma.PharmacyName;
-            this.Adress = modelPharma.Adress;
+            this.Address = modelPharma.Adress;
             this.Phone=modelPharma.Phone;
+            AppUser user = new AppUser(modelPharma.User);
+            this.User=user;
         }
     }
 }

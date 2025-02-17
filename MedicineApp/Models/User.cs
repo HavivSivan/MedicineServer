@@ -12,20 +12,22 @@ public partial class User
     public int UserId { get; set; }
 
     [StringLength(255)]
-    public string? FirstName { get; set; }
+    public string Email { get; set; } = null!;
 
     [StringLength(255)]
-    public string? LastName { get; set; }
+    public string FirstName { get; set; } = null!;
+
+    [StringLength(255)]
+    public string LastName { get; set; } = null!;
 
     [StringLength(30)]
     [Unicode(false)]
-    public string? UserName { get; set; }
+    public string UserName { get; set; } = null!;
 
     [StringLength(255)]
     [Unicode(false)]
-    public string? UserPass { get; set; }
+    public string UserPass { get; set; } = null!;
 
-    public string? Email { get; set; }
     public int UserRank { get; set; }
 
     [InverseProperty("User")]
@@ -33,4 +35,7 @@ public partial class User
 
     [InverseProperty("User")]
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
+
+    [InverseProperty("User")]
+    public virtual ICollection<Pharmacy> Pharmacies { get; set; } = new List<Pharmacy>();
 }

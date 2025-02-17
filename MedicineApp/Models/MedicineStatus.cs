@@ -12,11 +12,11 @@ public partial class MedicineStatus
     public int StatusId { get; set; }
 
     [Column("MStatus")]
-    [StringLength(1)]
+    [StringLength(20)]
     [Unicode(false)]
     public string? Mstatus { get; set; }
 
-    [StringLength(1)]
+    [StringLength(500)]
     public string? Notes { get; set; }
 
     [InverseProperty("Status")]

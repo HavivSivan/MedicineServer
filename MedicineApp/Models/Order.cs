@@ -15,17 +15,17 @@ public partial class Order
 
     public int UserId { get; set; }
 
-    [StringLength(1)]
-    public string? Receiver { get; set; }
+    [StringLength(255)]
+    public string Receiver { get; set; } = null!;
 
-    [StringLength(1)]
-    public string? Sender { get; set; }
+    [StringLength(255)]
+    public string Sender { get; set; } = null!;
 
     [ForeignKey("MedicineId")]
     [InverseProperty("Orders")]
-    public virtual Medicine? Medicine { get; set; }
+    public virtual Medicine Medicine { get; set; } = null!;
 
     [ForeignKey("UserId")]
     [InverseProperty("Orders")]
-    public virtual User? User { get; set; }
+    public virtual User User { get; set; } = null!;
 }

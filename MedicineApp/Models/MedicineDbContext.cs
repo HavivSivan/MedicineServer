@@ -33,37 +33,51 @@ public partial class MedicineDbContext : DbContext
     {
         modelBuilder.Entity<Medicine>(entity =>
         {
-            entity.HasKey(e => e.MedicineId).HasName("PK__Medicine__4F212890361759A4");
+            entity.HasKey(e => e.MedicineId).HasName("PK__Medicine__4F21289014701CC4");
 
-            entity.HasOne(d => d.Pharmacy).WithMany(p => p.Medicines).HasConstraintName("FK__Medicines__Pharm__2C3393D0");
+            entity.HasOne(d => d.Pharmacy).WithMany(p => p.Medicines)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Medicines__Pharm__2D27B809");
 
-            entity.HasOne(d => d.Status).WithMany(p => p.Medicines).HasConstraintName("FK__Medicines__Statu__2D27B809");
+            entity.HasOne(d => d.Status).WithMany(p => p.Medicines)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Medicines__Statu__2E1BDC42");
 
-            entity.HasOne(d => d.User).WithMany(p => p.Medicines).HasConstraintName("FK__Medicines__UserI__2E1BDC42");
+            entity.HasOne(d => d.User).WithMany(p => p.Medicines)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Medicines__UserI__2F10007B");
         });
 
         modelBuilder.Entity<MedicineStatus>(entity =>
         {
-            entity.HasKey(e => e.StatusId).HasName("PK__Medicine__C8EE20639F1469E1");
+            entity.HasKey(e => e.StatusId).HasName("PK__Medicine__C8EE2063C10C2C2C");
         });
 
         modelBuilder.Entity<Order>(entity =>
         {
-            entity.HasKey(e => e.OrderId).HasName("PK__Orders__C3905BCF9711B8C0");
+            entity.HasKey(e => e.OrderId).HasName("PK__Orders__C3905BCF6C6A0871");
 
-            entity.HasOne(d => d.Medicine).WithMany(p => p.Orders).HasConstraintName("FK__Orders__Medicine__30F848ED");
+            entity.HasOne(d => d.Medicine).WithMany(p => p.Orders)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Orders__Medicine__31EC6D26");
 
-            entity.HasOne(d => d.User).WithMany(p => p.Orders).HasConstraintName("FK__Orders__UserId__31EC6D26");
+            entity.HasOne(d => d.User).WithMany(p => p.Orders)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Orders__UserId__32E0915F");
         });
 
         modelBuilder.Entity<Pharmacy>(entity =>
         {
-            entity.HasKey(e => e.PharmacyId).HasName("PK__Pharmaci__BD9D2AAED96CE09A");
+            entity.HasKey(e => e.PharmacyId).HasName("PK__Pharmaci__BD9D2AAEECD76D27");
+
+            entity.HasOne(d => d.User).WithMany(p => p.Pharmacies)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Pharmacie__UserI__276EDEB3");
         });
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.UserId).HasName("PK__Users__1788CC4CD1F9A2C6");
+            entity.HasKey(e => e.UserId).HasName("PK__Users__1788CC4C6F208C3F");
         });
 
         OnModelCreatingPartial(modelBuilder);

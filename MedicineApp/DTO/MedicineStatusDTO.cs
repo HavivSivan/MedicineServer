@@ -1,27 +1,22 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using MedicineServer.Models;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
-namespace MedicineServer.DTO
+namespace Medicine.DTO
 {
-    public class OrderDTO
+    public class MedicineStatusDTO
     {
-        public int Id { get; set; }
-
-        public int MedicineId { get; set; }
-        public int UserId { get; set; }
-        public string Receiver { get; set; }
-
-        public string Sender { get; set; }
-
-        public OrderDTO() { }
-        public OrderDTO(Models.Order modelOrder)
+        public int StatusId { get; set; }
+        public string Mstatus { get; set; }
+        public string Notes { get; set; }
+        public MedicineStatusDTO() { }
+        public MedicineStatusDTO(MedicineStatus status) 
         {
-            this.Id = modelOrder.OrderId;
-            this.MedicineId = modelOrder.MedicineId;
-            this.UserId = modelOrder.UserId;
-            this.Sender = modelOrder.Sender;
-            this.Receiver = modelOrder.Receiver;
+            this.StatusId=status.StatusId;
+            this.Mstatus= status.Mstatus;
+            this.Notes=status.Notes;
         }
     }
 }

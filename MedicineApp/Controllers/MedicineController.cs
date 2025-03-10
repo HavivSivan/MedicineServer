@@ -24,27 +24,27 @@ namespace MedicineServer.Controllers
             this.context = context;
             this.webHostEnvironment = env;
         }
-        [HttpPost("deleteuser")]
-        public async Task<IActionResult> DeleteUser(int id)
-        {
+        //[HttpPost("deleteuser")]
+        //public async Task<IActionResult> DeleteUser(int id)
+        //{
             
-            var user = await context.Users.FindAsync(id);
+        //    var user = await context.Users.FindAsync(id);
 
-            if (user == null)
-            {
-                return NotFound(new { message = "User not found." });
-            }
+        //    if (user == null)
+        //    {
+        //        return NotFound(new { message = "User not found." });
+        //    }
 
-            if (user.UserRank == 1)
-            {
-                return BadRequest(new { message = "Admins cannot be deleted." });
-            }
-            user.Active = false;
-            context.Users.FirstOrDefault(u => u.UserId == id) = user;
-            await context.SaveChangesAsync();
+        //    if (user.UserRank == 1)
+        //    {
+        //        return BadRequest(new { message = "Admins cannot be deleted." });
+        //    }
+        //    user.Active = false;
+        //    context.Users.FirstOrDefault(u => u.UserId == id) = user;
+        //    await context.SaveChangesAsync();
 
-            return Ok(new { message = "User deleted successfully." });
-        }
+        //    return Ok(new { message = "User deleted successfully." });
+        //}
         [HttpGet("getuserbyusername")]
         public IActionResult GetUserByUsername([FromQuery] string username)
         {

@@ -24,27 +24,25 @@ namespace MedicineServer.Controllers
             this.context = context;
             this.webHostEnvironment = env;
         }
-        //[HttpPost("deleteuser")]
-        //public async Task<IActionResult> DeleteUser(int id)
-        //{
-            
-        //    var user = await context.Users.FindAsync(id);
+        [HttpPost("enableuser")]
+        public async Task<IActionResult> EnableUser(int id)
+        {
+            var user = await context.Users.FindAsync(id);
 
-        //    if (user == null)
-        //    {
-        //        return NotFound(new { message = "User not found." });
-        //    }
+            if (user == null)
+            {
+                return NotFound(new { message = "User not found." });
+            }
 
-        //    if (user.UserRank == 1)
-        //    {
-        //        return BadRequest(new { message = "Admins cannot be deleted." });
-        //    }
-        //    user.Active = false;
-        //    context.Users.FirstOrDefault(u => u.UserId == id) = user;
-        //    await context.SaveChangesAsync();
+            if (user.UserRank == 1)
+            {
+                return BadRequest(new { message = "Admins cannot be disabled." });
+            }
+            user.Active = !user.Active;
+            await context.SaveChangesAsync();
+            return Ok();
+        }
 
-        //    return Ok(new { message = "User deleted successfully." });
-        //}
         [HttpGet("getuserbyusername")]
         public IActionResult GetUserByUsername([FromQuery] string username)
         {
@@ -72,16 +70,16 @@ namespace MedicineServer.Controllers
                 HttpContext.Session.Clear(); 
 
              
-                Models.User? modelsUser =  context.Users.ToList().First(x=>x.UserName==loginDto.username);
+                Models.User? modelsUser =  context.Users.ToList().FirstOrDefault(x=>x.UserName==loginDto.username);
 
                 
-                if (modelsUser == null || modelsUser.UserPass != loginDto.password)
+                if (modelsUser == null || modelsUser.UserPass != loginDto.password||!modelsUser.Active)
                 {
                     return Unauthorized();
                 }
                 HttpContext.Session.SetString("loggedInUser", modelsUser.UserId.ToString());
                 AppUser dtoUser = new AppUser(modelsUser);
-               
+                
                 return Ok(dtoUser);
             }
             catch (Exception ex)
@@ -180,7 +178,9 @@ namespace MedicineServer.Controllers
                     Email = userDto.Email,
                     UserPass = userDto.UserPassword,
                     UserRank = userDto.Rank,
-                    UserId = userDto.Id
+                    UserId = userDto.Id,
+                    Active = true
+                    
                 };
 
                 context.Users.Add(modelsUser);

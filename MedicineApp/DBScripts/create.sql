@@ -76,11 +76,13 @@ GO
 
 INSERT INTO Users (Email, FirstName, LastName, UserName, UserPass, UserRank, Active)
 VALUES ('Admin@admin.com', 'Admin', 'Admin', 'Admin', 'qwerty', 1, 1);
+INSERT INTO Users (Email, FirstName, LastName, UserName, UserPass, UserRank, Active)
+VALUES ('Pharma@Pharma.com', 'Pharma', 'Pharma', 'Pharma', 'qwerty', 2, 1);
 INSERT INTO Pharmacies (PharmacyName, Adress, Phone, UserId)
 VALUES 
 ('Good Health Pharmacy', '123 Main St, City', '1234567890', 2);
 INSERT INTO MedicineStatuses (MStatus, Notes)
-VALUES ('Approved', 'Ready for distribution');
+VALUES ('Checking', 'Ready for distribution');
 INSERT INTO Medicines (PharmacyId, MedicineName, BrandName, StatusId, UserId)
 VALUES 
 (1, 'Paracetamol', 'Tylenol', 1, 2); 

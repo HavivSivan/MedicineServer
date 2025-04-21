@@ -41,6 +41,7 @@ CREATE TABLE Medicines (
     PharmacyId INT NOT NULL,
     MedicineName VARCHAR(100) NOT NULL,
     BrandName NVARCHAR(100) NOT NULL,
+    NeedsPrescription bit NOT NULL,
     StatusId INT NOT NULL,
     UserId INT NOT NULL,
     FOREIGN KEY (PharmacyId) REFERENCES Pharmacies(PharmacyId),
@@ -83,12 +84,22 @@ VALUES
 ('Good Health Pharmacy', '123 Main St, City', '1234567890', 2);
 INSERT INTO MedicineStatuses (MStatus, Notes)
 VALUES ('Checking', 'Ready for distribution');
-INSERT INTO Medicines (PharmacyId, MedicineName, BrandName, StatusId, UserId)
+INSERT INTO MedicineStatuses(MStatus, Notes)
+VALUES('Approved', 'yuh');
+INSERT INTO Medicines (PharmacyId, MedicineName, BrandName, StatusId, UserId, NeedsPrescription)
 VALUES 
-(1, 'Paracetamol', 'Tylenol', 1, 2); 
+(1, 'Paracetamol', 'Tylenol', 1, 2, 0); 
 INSERT INTO Orders (MedicineId, UserId, Receiver, Sender)
 VALUES 
 (1, 2, 'Admin Admin', 'Good Health Pharmacy'); 
+INSERT INTO Medicines (PharmacyId, MedicineName, BrandName, StatusId, UserId, NeedsPrescription)
+VALUES 
+(1, 'Ibuprofen', 'Advil', 2, 2, 1);
+
+INSERT INTO Medicines (PharmacyId, MedicineName, BrandName, StatusId, UserId, NeedsPrescription)
+VALUES 
+(1, 'Loratadine', 'Claritin', 1, 2, 0);
+
 SELECT * FROM Users;
 SELECT * FROM Pharmacies;
 SELECT * FROM MedicineStatuses;

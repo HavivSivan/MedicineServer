@@ -26,9 +26,10 @@ public partial class User
 
     [StringLength(255)]
     [Unicode(false)]
-    public string UserPass { get; set; } = null!;
+    [Column("UserPass")]
+    public string UserPassword { get; set; } = null!;
 
-    public int UserRank { get; set; }
+    public int? UserRank { get; set; }
 
     public bool Active { get; set; }
 

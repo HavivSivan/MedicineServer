@@ -20,6 +20,8 @@ public partial class Medicine
     [StringLength(100)]
     public string BrandName { get; set; } = null!;
 
+    public bool NeedsPrescription { get; set; }
+
     public int StatusId { get; set; }
 
     public int UserId { get; set; }

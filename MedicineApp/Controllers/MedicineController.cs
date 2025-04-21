@@ -3,7 +3,6 @@ using MedicineServer.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Data.Entity;
 using System.Linq;
 using MedicineServer.DTO;
 using Microsoft.IdentityModel.Tokens;
@@ -42,7 +41,29 @@ namespace MedicineServer.Controllers
             await context.SaveChangesAsync();
             return Ok();
         }
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateMedicine(int id, [FromBody] MedicineDTO updatedMedicine)
+        {
+            if (id != updatedMedicine.MedicineId)
+            {
+                return BadRequest("Mismatched ID");
+            }
 
+            var existingMedicine = await context.Medicines.Include( m => m.Status).FirstOrDefaultAsync(m => m.MedicineId == id);
+
+            if (existingMedicine == null)
+            {
+                return NotFound();
+            }
+
+            existingMedicine.NeedsPrescription = updatedMedicine.NeedsPrescription;
+            existingMedicine.Status.Mstatus = updatedMedicine.Status.Mstatus;
+            existingMedicine.Status.Notes = updatedMedicine.Status.Notes;
+
+            await context.SaveChangesAsync();
+
+            return Ok();
+        }
         [HttpGet("getuserbyusername")]
         public IActionResult GetUserByUsername([FromQuery] string username)
         {
@@ -73,7 +94,7 @@ namespace MedicineServer.Controllers
                 Models.User? modelsUser =  context.Users.ToList().FirstOrDefault(x=>x.UserName==loginDto.username);
 
                 
-                if (modelsUser == null || modelsUser.UserPass != loginDto.password||!modelsUser.Active)
+                if (modelsUser == null || modelsUser.UserPassword != loginDto.password||!modelsUser.Active)
                 {
                     return Unauthorized();
                 }
@@ -176,7 +197,7 @@ namespace MedicineServer.Controllers
                     FirstName = userDto.FirstName,
                     LastName = userDto.LastName,
                     Email = userDto.Email,
-                    UserPass = userDto.UserPassword,
+                    UserPassword = userDto.UserPassword,
                     UserRank = userDto.Rank,
                     UserId = userDto.Id,
                     Active = true
@@ -209,6 +230,26 @@ namespace MedicineServer.Controllers
                 Console.WriteLine($"Error during registration: {ex.Message}");
                 return BadRequest($"Error during registration: {ex.Message}");
             }
+        }
+        [HttpGet("is-username-taken/{username}")]
+        public async Task<IActionResult> IsUsernameTaken(string username)
+        {
+            var exists = await context.Users.AnyAsync(u => u.UserName == username);
+            return Ok(exists);
+        }
+        [HttpPut("update-user")]
+        public async Task<IActionResult> UpdateUser([FromBody] AppUser updatedUser)
+        {
+            var user = await context.Users.FindAsync(updatedUser.Id);
+            if (user == null)
+                return NotFound();
+
+            user.UserName = updatedUser.UserName;
+            user.UserPassword = updatedUser.UserPassword;
+
+
+            await context.SaveChangesAsync();
+            return Ok();
         }
 
 

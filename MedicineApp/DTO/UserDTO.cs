@@ -28,8 +28,8 @@ namespace MedicineServer.DTO
                 this.LastName = modelUser.LastName;
                 this.FirstName = modelUser.FirstName;
                 this.Email = modelUser.Email;
-                this.UserPassword = modelUser.UserPass;
-                this.Rank = modelUser.UserRank;
+                this.UserPassword = modelUser.UserPassword;
+                this.Rank = modelUser.UserRank.Value;
                 this.Active = true;
             }
         }

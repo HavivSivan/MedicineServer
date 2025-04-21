@@ -15,6 +15,8 @@ namespace MedicineServer.DTO
 
       
         public string BrandName { get; set; }
+        
+        public bool NeedsPrescription { get; set; }
 
         public MedicineStatus Status { get; set; }
 
@@ -30,6 +32,7 @@ namespace MedicineServer.DTO
             this.BrandName = medicine.BrandName;
             AppUser user= new AppUser(medicine.User);
             this.User = user;
+            this.NeedsPrescription=medicine.NeedsPrescription;
         }
     }
 }

@@ -231,13 +231,13 @@ namespace MedicineServer.Controllers
                 return BadRequest($"Error during registration: {ex.Message}");
             }
         }
-        [HttpGet("is-username-taken/{username}")]
+        [HttpGet("isusernametaken/{username}")]
         public async Task<IActionResult> IsUsernameTaken(string username)
         {
             var exists = await context.Users.AnyAsync(u => u.UserName == username);
             return Ok(exists);
         }
-        [HttpPut("update-user")]
+        [HttpPut("updateuser")]
         public async Task<IActionResult> UpdateUser([FromBody] AppUser updatedUser)
         {
             var user = await context.Users.FindAsync(updatedUser.Id);

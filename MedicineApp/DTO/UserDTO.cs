@@ -30,7 +30,7 @@ namespace MedicineServer.DTO
                 this.Email = modelUser.Email;
                 this.UserPassword = modelUser.UserPassword;
                 this.Rank = modelUser.UserRank.Value;
-                this.Active = true;
+                this.Active = modelUser.Active;
             }
         }
     }

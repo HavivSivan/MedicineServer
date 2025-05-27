@@ -14,9 +14,12 @@ namespace Medicine.DTO
         public MedicineStatusDTO() { }
         public MedicineStatusDTO(MedicineStatus status) 
         {
-            this.StatusId=status.StatusId;
-            this.Mstatus= status.Mstatus;
-            this.Notes=status.Notes;
+            if (status!=null)
+            {
+                this.StatusId=status.StatusId;
+                this.Mstatus= status.Mstatus;
+                this.Notes=status.Notes;
+            }
         }
     }
 }

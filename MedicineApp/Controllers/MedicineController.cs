@@ -19,7 +19,7 @@ namespace MedicineServer.Controllers
 
         private IWebHostEnvironment webHostEnvironment;
 
-        public  MedicineController(MedicineDbContext context, IWebHostEnvironment env)
+        public MedicineController(MedicineDbContext context, IWebHostEnvironment env)
         {
             this.context = context;
             this.webHostEnvironment = env;
@@ -50,7 +50,7 @@ namespace MedicineServer.Controllers
                 return BadRequest("Mismatched ID");
             }
 
-            var existingMedicine = await context.Medicines.Include( m => m.Status).FirstOrDefaultAsync(m => m.MedicineId == id);
+            var existingMedicine = await context.Medicines.Include(m => m.Status).FirstOrDefaultAsync(m => m.MedicineId == id);
 
             if (existingMedicine == null)
             {
@@ -66,42 +66,48 @@ namespace MedicineServer.Controllers
             return Ok();
         }
         [HttpGet("getuserbyusername")]
-        public IActionResult GetUserByUsername([FromQuery] string username)
+        public async Task<IActionResult> GetUserByUsername([FromQuery] string username)
         {
-            try
-            {
-                var tempuser = context.Users.FirstOrDefault(u => u.UserName == username);
-                if (tempuser == null)
+            var user = await context.Users
+                .Where(u => u.UserName == username)
+                .Select(u => new AppUser
                 {
-                    return NotFound(new { Message = "User not found." });
-                }
-                AppUser user = new AppUser(tempuser);
-                return Ok(user);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { Message = "An error occurred while retrieving the user.", Error = ex.Message });
-            }
+                    Id           = u.UserId,
+                    UserName     = u.UserName,
+                    UserPassword = u.UserPassword,
+                    Email        = u.Email,
+                    FirstName    = u.FirstName,
+                    LastName     = u.LastName,
+                    Rank     = (int)u.UserRank,
+                    Active       = u.Active
+                })
+                .FirstOrDefaultAsync();
+
+            if (user is null)
+                return NotFound();
+
+            return Ok(user);
         }
+    
 
         [HttpPost("login")]
         public IActionResult Login([FromBody] DTO.LoginInfo loginDto)
         {
             try
             {
-                HttpContext.Session.Clear(); 
+                HttpContext.Session.Clear();
 
-             
-                Models.User? modelsUser =  context.Users.ToList().FirstOrDefault(x=>x.UserName==loginDto.username);
 
-                
+                Models.User? modelsUser = context.Users.ToList().FirstOrDefault(x => x.UserName==loginDto.username);
+
+
                 if (modelsUser == null || modelsUser.UserPassword != loginDto.password||!modelsUser.Active)
                 {
                     return Unauthorized();
                 }
                 HttpContext.Session.SetString("loggedInUser", modelsUser.UserId.ToString());
                 AppUser dtoUser = new AppUser(modelsUser);
-                
+
                 return Ok(dtoUser);
             }
             catch (Exception ex)
@@ -116,7 +122,7 @@ namespace MedicineServer.Controllers
             try
             {
                 List<User> list = new List<User>();
-                
+
                 foreach (var user in context.Users)
                 {
                     AppUser temp = new AppUser(user);
@@ -129,7 +135,7 @@ namespace MedicineServer.Controllers
                 }
                 return Ok(list);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return StatusCode(500, new { Message = "An error occurred while retrieving Users.", Error = ex.Message });
             }
@@ -139,13 +145,13 @@ namespace MedicineServer.Controllers
         {
             try
             {
-                List<Models.Medicine> Tlist = context.Medicines.Where(x=>x.PharmacyId==PharmacyId).ToList<Models.Medicine>();
+                List<Models.Medicine> Tlist = context.Medicines.Where(x => x.PharmacyId==PharmacyId).ToList<Models.Medicine>();
                 if (Tlist == null)
                 {
                     return NotFound(new { Message = "You have no medicines." });
                 }
                 List<MedicineDTO> list = new List<MedicineDTO>();
-                foreach(Models.Medicine x in Tlist)
+                foreach (Models.Medicine x in Tlist)
                 {
                     MedicineDTO temp = new MedicineDTO(x);
                     list.Add(temp);
@@ -162,22 +168,31 @@ namespace MedicineServer.Controllers
         {
             try
             {
-                List<MedicineDTO> list = new List<MedicineDTO>();
-                foreach(var m in  context.Medicines)
+                var medicines = context.Medicines
+                    .Include(m => m.Status)
+                    .Include(m => m.Pharmacy)
+                    .Include(m => m.User) 
+                    .ToList();
+
+                if (medicines == null || !medicines.Any())
                 {
-                    MedicineDTO temp = new MedicineDTO(m);
-                    list.Add(temp);
-                }
-                if (list.IsNullOrEmpty())
                     return NotFound(new { Message = "No medicines exist." });
-                return Ok(list);
+                }
+
+                var dtoList = medicines.Select(m => new MedicineDTO(m)).ToList();
+
+                return Ok(dtoList);
             }
-            
-            catch(Exception ex)
-            { 
-                return StatusCode(500, new { Message = "An error occurred while retrieving medicines.", error = ex.Message }); 
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    Message = "An error occurred while retrieving medicines.",
+                    error = ex.Message
+                });
             }
         }
+
         [HttpPost("register")]
         public IActionResult Register([FromBody] DTO.AppUser userDto)
         {
@@ -202,7 +217,7 @@ namespace MedicineServer.Controllers
                     UserRank = userDto.Rank,
                     UserId = userDto.Id,
                     Active = true
-                    
+
                 };
 
                 context.Users.Add(modelsUser);
@@ -221,7 +236,7 @@ namespace MedicineServer.Controllers
                 {
                     Console.WriteLine($"Error: {ex.InnerException?.Message}");
                     Console.WriteLine($"Error: {ex.ToString()}");
-                    throw; 
+                    throw;
                 }
 
                 return Ok(new DTO.AppUser(modelsUser));
@@ -232,26 +247,27 @@ namespace MedicineServer.Controllers
                 return BadRequest($"Error during registration: {ex.Message}");
             }
         }
-        [HttpGet("isusernametaken/{username}")]
+        [HttpGet("is-username-taken/{username}")]
         public async Task<IActionResult> IsUsernameTaken(string username)
         {
-            var exists = await context.Users.AnyAsync(u => u.UserName == username);
+            var exists = context.Users.Any(u => u.UserName == username);
             return Ok(exists);
         }
-        [HttpPut("updateuser")]
+
+        [HttpPut("update-user")]
         public async Task<IActionResult> UpdateUser([FromBody] AppUser updatedUser)
         {
             var user = await context.Users.FindAsync(updatedUser.Id);
-            if (user == null)
-                return NotFound();
-
-            user.UserName = updatedUser.UserName;
-            user.UserPassword = updatedUser.UserPassword;
-
-
-            await context.SaveChangesAsync();
-            return Ok();
+            if (user == null) return NotFound();
+            if (user.UserPassword==updatedUser.UserPassword)
+            {
+                user.UserName = updatedUser.UserName;
+                await context.SaveChangesAsync();
+                return Ok();
+            }
+            return BadRequest();
         }
+
 
         #region Backup / Restore
         [HttpGet("Backup")]
@@ -374,5 +390,180 @@ namespace MedicineServer.Controllers
 
         }
         #endregion
+        [HttpPost("Order")]
+        public IActionResult Order(OrderDTO order)
+        {
+            if (order == null || order.Medicine == null || order.User == null)
+            {
+                return BadRequest("Invalid order data.");
+            }
+
+            var medicine = context.Medicines.FirstOrDefault(x => x.MedicineId == order.Medicine.MedicineId);
+            var user = context.Users.FirstOrDefault(x => x.UserId == order.User.Id);
+
+            if (medicine == null || user == null)
+            {
+                return BadRequest("Medicine or user does not exist.");
+            }
+
+            var newOrder = new Order
+            {
+                MedicineId = medicine.MedicineId,
+                UserId = user.UserId,
+                PrescriptionImage = order.PrescriptionImage,
+                OStatus = order.OStatus
+            };
+            
+            context.Orders.Add(newOrder);
+            context.SaveChanges();
+
+            return Ok();
+        }
+
+        [HttpPost("UpdateOrderStatus")]
+        public IActionResult UpdateOrderStatus([FromBody] Order updatedOrder)
+        {
+            var order = context.Orders.FirstOrDefault(o => o.OrderId == updatedOrder.OrderId);
+            if (order == null) return NotFound();
+
+            order.OStatus = updatedOrder.OStatus;
+            if(updatedOrder.OStatus=="Approved")
+            {
+                int id = context.Medicines.FirstOrDefault(x => x.MedicineId==updatedOrder.MedicineId).StatusId;
+                context.MedicineStatuses.FirstOrDefault(x => x.StatusId==id).Mstatus="Ordered";
+                try
+                {
+                    context.SaveChanges();
+                }
+                catch(DbUpdateException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+            context.SaveChanges();
+            return Ok();
+        }
+        [HttpPost("AttachPrescriptionToOrder")]
+        public async Task<IActionResult> AttachPrescriptionToOrder(int orderId, [FromBody] string imageUrl)
+        {
+            var order = await context.Orders.FindAsync(orderId);
+            if (order == null) return NotFound("Order not found");
+
+            order.PrescriptionImage = imageUrl;
+            await context.SaveChangesAsync();
+
+            return Ok("Image attached");
+        }
+        [HttpGet("GetOrdersList")]
+        public async Task<IActionResult> GetOrdersList()
+        {
+            try
+            {
+                var orders = await context.Orders.Include(o => o.Medicine).Include(o => o.User).ToListAsync();
+                if (orders == null || !orders.Any())
+                {
+                    return NotFound(new { Message = "No orders found." });
+                }
+                List<OrderDTO> orderDtos = orders.Select(o => new OrderDTO(o)).ToList();
+                return Ok(orderDtos);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "An error occurred while retrieving orders.", Error = ex.Message });
+            }
+        }
+        [HttpPost("AddMedicine")]
+        public async Task<IActionResult> AddMedicine([FromBody] MedicineCreateDTO dto)
+        {
+            if (dto == null)
+                return BadRequest("Payload is null.");
+            var newMed = new Models.Medicine
+            {
+                MedicineName      = dto.MedicineName,
+                BrandName         = dto.BrandName,
+                NeedsPrescription = false,
+                PharmacyId        = dto.PharmacyId,
+                StatusId          = 1,
+                UserId            = dto.UserId
+            };
+
+            context.Medicines.Add(newMed);
+            try
+            {
+
+                context.SaveChanges();
+            }
+            catch (DbUpdateException ex)
+            {
+                Console.WriteLine($"Error: {ex.InnerException?.Message}");
+                Console.WriteLine($"Error: {ex.ToString()}");
+                throw;
+            }
+            return Ok();
+        }
+        [HttpPost("AddPharmacy")]
+        public async Task<IActionResult> AddPharmacy([FromBody] PharmacyCreateDTO dto)
+        {
+            if (dto == null)
+                return BadRequest("Payload is null.");
+
+            var user = await context.Users.FindAsync(dto.UserId);
+            if (user == null || user.UserRank != 3)
+                return BadRequest("Invalid user");
+
+            user.UserRank = 2;
+
+            var newPharmacy = new Pharmacy
+            {
+                PharmacyName = dto.Name,
+                Adress       = dto.Address,
+                Phone        = dto.Phone,
+                UserId       = dto.UserId
+            };
+
+            context.Pharmacies.Add(newPharmacy);
+            await context.SaveChangesAsync();
+
+            return Ok(new { PharmacyId = newPharmacy.PharmacyId });
+        }
+        [HttpGet("GetPharmacies")]
+        public async Task<List<PharmacyDTO>> GetPharmacies()
+        {
+            try
+            {
+                var pharmacies = await context.Pharmacies
+                                             .Include(p => p.User)
+                                             .ToListAsync();
+
+                var dtos = pharmacies
+                           .Select(p => new PharmacyDTO(p))
+                           .ToList();
+
+                // (optional) logging
+                dtos.ForEach(d => Console.WriteLine($"Pharmacy: {d.Name}, Address: {d.Address}, Phone: {d.Phone}"));
+
+                return dtos;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error retrieving pharmacies: {ex.Message}");
+                return new List<PharmacyDTO>();
+            }
+        }
+        public class MedicineCreateDTO
+        {
+            public string MedicineName { get; set; }
+            public string BrandName { get; set; }
+            public int PharmacyId { get; set; }
+            public int UserId { get; set; }
+        }
+        public class PharmacyCreateDTO
+        {
+            public string Name { get; set; }
+            public string Address { get; set; }
+            public string Phone { get; set; }
+            public int UserId { get; set; }
+        }
+
     }
 }

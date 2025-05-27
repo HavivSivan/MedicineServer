@@ -12,14 +12,11 @@ public partial class Order
     public int OrderId { get; set; }
 
     public int MedicineId { get; set; }
-
+    [StringLength(255)]
+    public string OStatus { get; set; }
     public int UserId { get; set; }
-
     [StringLength(255)]
-    public string Receiver { get; set; } = null!;
-
-    [StringLength(255)]
-    public string Sender { get; set; } = null!;
+    public string? PrescriptionImage{ get; set; }
 
     [ForeignKey("MedicineId")]
     [InverseProperty("Orders")]

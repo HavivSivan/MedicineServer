@@ -32,7 +32,7 @@ CREATE TABLE Pharmacies (
 
 CREATE TABLE MedicineStatuses (
     StatusId INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
-    MStatus VARCHAR(20) CHECK (MStatus IN ('Approved', 'Denied', 'Checking') OR MStatus IS NULL),
+    MStatus VARCHAR(20) CHECK (MStatus IN ('Approved', 'Denied', 'Checking', 'Ordered') OR MStatus IS NULL),
     Notes NVARCHAR(500)
 );
 
@@ -53,10 +53,11 @@ CREATE TABLE Orders (
     OrderId INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
     MedicineId INT NOT NULL,
     UserId INT NOT NULL,
-    Receiver NVARCHAR(255) NOT NULL,
-    Sender NVARCHAR(255) NOT NULL,
+    OStatus NVARCHAR(255) CHECK (OStatus IN ('Approved', 'Denied', 'Pending') OR OStatus IS NULL),
+    PrescriptionImage NVARCHAR(255),
     FOREIGN KEY (MedicineId) REFERENCES Medicines(MedicineId),
     FOREIGN KEY (UserId) REFERENCES Users(UserId)
+
 );
 
 IF NOT EXISTS (SELECT * FROM sys.sql_logins WHERE name = 'MedicineAdminLogin')
@@ -89,9 +90,12 @@ VALUES('Approved', 'yuh');
 INSERT INTO Medicines (PharmacyId, MedicineName, BrandName, StatusId, UserId, NeedsPrescription)
 VALUES 
 (1, 'Paracetamol', 'Tylenol', 1, 2, 0); 
-INSERT INTO Orders (MedicineId, UserId, Receiver, Sender)
+INSERT INTO Medicines (PharmacyId, MedicineName, BrandName, StatusId, UserId, NeedsPrescription)
 VALUES 
-(1, 2, 'Admin Admin', 'Good Health Pharmacy'); 
+(1, 'Septol', 'Septol', 2, 2, 0);
+INSERT INTO Orders (MedicineId, UserId, OStatus)
+VALUES 
+(1, 2, 'Approved'); 
 INSERT INTO Medicines (PharmacyId, MedicineName, BrandName, StatusId, UserId, NeedsPrescription)
 VALUES 
 (1, 'Ibuprofen', 'Advil', 2, 2, 1);

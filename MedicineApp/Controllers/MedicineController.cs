@@ -494,11 +494,22 @@ namespace MedicineServer.Controllers
         {
             if (dto == null)
                 return BadRequest("Payload is null.");
-            var newstatus= new Models.MedicineStatus
+            MedicineStatus newstatus= new Models.MedicineStatus
             {
-                Mstatus = "Pending",
-                Notes   = "New medicine added."
+                Mstatus = "Checking",
+                Notes   = "New medicine added.",
+                
             };
+            try
+            {
+                context.MedicineStatuses.Add(newstatus);
+                context.SaveChanges();
+            }
+            catch(DbUpdateException ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.InnerException);
+            }
             var newMed = new Models.Medicine
             {
                 MedicineName      = dto.MedicineName,
@@ -508,12 +519,10 @@ namespace MedicineServer.Controllers
                 StatusId          = newstatus.StatusId,
                 UserId            = dto.UserId
             };
-
             context.Medicines.Add(newMed);
-            context.MedicineStatuses.Add(newstatus);
+            
             try
             {
-
                 context.SaveChanges();
             }
             catch (DbUpdateException ex)

@@ -170,11 +170,7 @@ namespace MedicineServer.Controllers
         {
             try
             {
-                var medicines = context.Medicines
-                    .Include(m => m.Status)
-                    .Include(m => m.Pharmacy)
-                    .Include(m => m.User) 
-                    .ToList();
+                var medicines = context.Medicines.Include(m => m.Status).Include(m => m.Pharmacy).Include(m => m.User).Include(m=>m.Pharmacy.User).ToList();
 
                 if (medicines == null || !medicines.Any())
                 {
@@ -517,7 +513,7 @@ namespace MedicineServer.Controllers
                 NeedsPrescription = false,
                 PharmacyId        = dto.PharmacyId,
                 StatusId          = newstatus.StatusId,
-                UserId            = dto.UserId
+                UserId            = context.Users.FirstOrDefault(x=>x.UserName==dto.Username).UserId
             };
             context.Medicines.Add(newMed);
             
@@ -539,7 +535,7 @@ namespace MedicineServer.Controllers
             if (dto == null)
                 return BadRequest("Payload is null.");
 
-            var user = await context.Users.FindAsync(dto.UserId);
+            var user = await context.Users.FindAsync(dto.Username);
             if (user == null || user.UserRank != 3)
                 return BadRequest("Invalid user");
 
@@ -550,7 +546,7 @@ namespace MedicineServer.Controllers
                 PharmacyName = dto.Name,
                 Adress       = dto.Address,
                 Phone        = dto.Phone,
-                UserId       = dto.UserId
+                UserId       = user.UserId
             };
 
             context.Pharmacies.Add(newPharmacy);
@@ -584,14 +580,14 @@ namespace MedicineServer.Controllers
             public string MedicineName { get; set; }
             public string BrandName { get; set; }
             public int PharmacyId { get; set; }
-            public int UserId { get; set; }
+            public string Username { get; set; }
         }
         public class PharmacyCreateDTO
         {
             public string Name { get; set; }
             public string Address { get; set; }
             public string Phone { get; set; }
-            public int UserId { get; set; }
+            public int Username { get; set; }
         }
         public class LoginInfo
         {

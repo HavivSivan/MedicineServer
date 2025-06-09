@@ -82,7 +82,7 @@ INSERT INTO Users (Email, FirstName, LastName, UserName, UserPass, UserRank, Act
 VALUES ('Pharma@Pharma.com', 'Pharma', 'Pharma', 'Pharma', 'qwerty', 2, 1);
 INSERT INTO Pharmacies (PharmacyName, Adress, Phone, UserId)
 VALUES 
-('Good Health Pharmacy', '123 Main St, City', '1234567890', 2);
+('Good Health Pharmacy', '123 Main St, City', '1234567890', 3);
 INSERT INTO MedicineStatuses (MStatus, Notes)
 VALUES ('Checking', 'Ready for distribution');
 INSERT INTO MedicineStatuses(MStatus, Notes)

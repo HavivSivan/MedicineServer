@@ -87,22 +87,26 @@ INSERT INTO MedicineStatuses (MStatus, Notes)
 VALUES ('Checking', 'Ready for distribution');
 INSERT INTO MedicineStatuses(MStatus, Notes)
 VALUES('Approved', 'yuh');
+INSERT INTO MedicineStatuses (MStatus, Notes)
+VALUES ('Denied', '');
+INSERT INTO MedicineStatuses (MStatus, Notes)
+VALUES ('Ordered', 'Ordered');
 INSERT INTO Medicines (PharmacyId, MedicineName, BrandName, StatusId, UserId, NeedsPrescription)
 VALUES 
 (1, 'Paracetamol', 'Tylenol', 1, 2, 0); 
 INSERT INTO Medicines (PharmacyId, MedicineName, BrandName, StatusId, UserId, NeedsPrescription)
 VALUES 
-(1, 'Septol', 'Septol', 2, 2, 0);
+(1, 'Septol', 'Septol', 2, 2, 1);
 INSERT INTO Orders (MedicineId, UserId, OStatus)
 VALUES 
 (1, 2, 'Approved'); 
 INSERT INTO Medicines (PharmacyId, MedicineName, BrandName, StatusId, UserId, NeedsPrescription)
 VALUES 
-(1, 'Ibuprofen', 'Advil', 2, 2, 1);
+(1, 'Ibuprofen', 'Advil', 3, 2, 1);
 
 INSERT INTO Medicines (PharmacyId, MedicineName, BrandName, StatusId, UserId, NeedsPrescription)
 VALUES 
-(1, 'Loratadine', 'Claritin', 1, 2, 0);
+(1, 'Loratadine', 'Claritin', 4, 2, 0);
 
 SELECT * FROM Users;
 SELECT * FROM Pharmacies;

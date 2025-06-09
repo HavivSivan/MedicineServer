@@ -22,6 +22,7 @@ namespace MedicineServer.DTO
         public MedicineStatusDTO Status { get; set; }
 
         public AppUser User { get; set; }
+        public MedicineDTO() { }
         public MedicineDTO(Models.Medicine medicine) 
         {
             if (medicine!=null)

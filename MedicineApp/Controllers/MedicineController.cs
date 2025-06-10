@@ -470,26 +470,32 @@ namespace MedicineServer.Controllers
         [HttpGet("GetOrdersList")]
         public async Task<IActionResult> GetOrdersList()
         {
-            try
-            {
-                var orders = await context.Orders.Include(o => o.Medicine).Include(o => o.User).ToListAsync();
-                if (orders == null || !orders.Any())
-                {
-                    return NotFound(new { Message = "No orders found." });
-                }
-                List<OrderDTO> orderDtos = orders.Select(o => new OrderDTO(o)).ToList();
-                return Ok(orderDtos);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { Message = "An error occurred while retrieving orders.", Error = ex.Message });
-            }
+            var orders = await context.Orders
+                .Include(o => o.Medicine)
+                    .ThenInclude(m => m.Pharmacy)
+                        .ThenInclude(p => p.User)
+                .Include(o => o.User)
+                .ToListAsync();
+
+            if (!orders.Any())
+                return NotFound(new { Message = "No orders found." });
+
+            var dtos = orders.Select(o => new OrderDTO(o)).ToList();
+            return Ok(dtos);
         }
         [HttpPost("AddMedicine")]
         public async Task<IActionResult> AddMedicine([FromBody] MedicineCreateDTO dto)
         {
             if (dto == null)
                 return BadRequest("Payload is null.");
+            if(context.Users.FirstOrDefault(x=>x.UserName==dto.Username)==null)
+            {
+                return BadRequest("Invalid user");
+            }
+            if (context.Pharmacies.FirstOrDefault(x => x.PharmacyId == dto.PharmacyId) == null)
+            {
+                return BadRequest("Invalid pharmacy");
+            }
             MedicineStatus newstatus= new Models.MedicineStatus
             {
                 Mstatus = "Checking",

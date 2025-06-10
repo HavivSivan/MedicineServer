@@ -22,7 +22,7 @@ namespace MedicineServer.DTO
                 this.Medicine = medicine;
                 AppUser user = new AppUser(modelOrder.User);
                 this.User = user;
-                this.PrescriptionImage=PrescriptionImage;
+                this.PrescriptionImage=modelOrder.PrescriptionImage;
                 this.OStatus=modelOrder.OStatus;
             }
         }

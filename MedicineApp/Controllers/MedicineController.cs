@@ -248,7 +248,7 @@ namespace MedicineServer.Controllers
         [HttpGet("is-username-taken/{username}")]
         public async Task<IActionResult> IsUsernameTaken(string username)
         {
-            var exists = context.Users.Any(u => u.UserName == username);
+            var exists = await context.Users.AnyAsync(u => u.UserName == username);
             return Ok(exists);
         }
 

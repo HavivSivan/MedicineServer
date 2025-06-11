@@ -470,13 +470,7 @@ namespace MedicineServer.Controllers
         [HttpGet("GetOrdersList")]
         public async Task<IActionResult> GetOrdersList()
         {
-            var orders = await context.Orders
-                .Include(o => o.Medicine)
-                    .ThenInclude(m => m.Pharmacy)
-                        .ThenInclude(p => p.User)
-                .Include(o => o.User)
-                .ToListAsync();
-
+            var orders = await context.Orders.Include(o => o.Medicine).ThenInclude(m => m.Pharmacy).ThenInclude(p => p.User).Include(o => o.User).ToListAsync();
             if (!orders.Any())
                 return NotFound(new { Message = "No orders found." });
 
@@ -488,7 +482,7 @@ namespace MedicineServer.Controllers
         {
             if (dto == null)
                 return BadRequest("Payload is null.");
-            if(context.Users.FirstOrDefault(x=>x.UserName==dto.Username)==null)
+            if(context.Users.FirstOrDefault(x=>x.UserId==dto.Userid)==null)
             {
                 return BadRequest("Invalid user");
             }
@@ -519,7 +513,7 @@ namespace MedicineServer.Controllers
                 NeedsPrescription = false,
                 PharmacyId        = dto.PharmacyId,
                 StatusId          = newstatus.StatusId,
-                UserId            = context.Users.FirstOrDefault(x=>x.UserName==dto.Username).UserId
+                UserId            = dto.Userid
             };
             context.Medicines.Add(newMed);
             
@@ -541,7 +535,7 @@ namespace MedicineServer.Controllers
             if (dto == null)
                 return BadRequest("Payload is null.");
 
-            var user = await context.Users.FindAsync(dto.Username);
+            var user = await context.Users.FindAsync(dto.UserId);
             if (user == null || user.UserRank != 3)
                 return BadRequest("Invalid user");
 
@@ -586,14 +580,14 @@ namespace MedicineServer.Controllers
             public string MedicineName { get; set; }
             public string BrandName { get; set; }
             public int PharmacyId { get; set; }
-            public string Username { get; set; }
+            public int Userid { get; set; }
         }
         public class PharmacyCreateDTO
         {
             public string Name { get; set; }
             public string Address { get; set; }
             public string Phone { get; set; }
-            public int Username { get; set; }
+            public int UserId { get; set; }
         }
         public class LoginInfo
         {
